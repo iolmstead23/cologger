@@ -1,0 +1,10 @@
+{
+  "apiEndpoint": "http://localhost",
+  "apiPort": 11434,
+  "apiPath": "/v1/chat/completions",
+  "model": "qwen2.5:latest",
+  "temperature": 0.3,
+  "maxTokens": 4096,
+  "timeoutSeconds": 30,
+  "systemPrompt": "You are an expert log analysis assistant for IT Service Desk. Analyze the provided logs and identify errors, warnings, and issues. Provide clear, actionable insights."
+}
