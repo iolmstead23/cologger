@@ -1,0 +1,128 @@
+name: Build and Release CoLogger
+
+on:
+  push:
+    branches:
+      - master
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history for version calculation
+
+    - name: Get next version
+      id: version
+      shell: pwsh
+      run: |
+        # Get the latest tag
+        $tags = git tag --sort=-v:refname
+        $latestTag = $tags | Select-Object -First 1
+
+        if (-not $latestTag) {
+          # No tags exist, start with v1.0.0
+          $newVersion = "v1.0.0"
+        } else {
+          # Parse the version (assuming format v1.0.0)
+          if ($latestTag -match '^v?(\d+)\.(\d+)\.(\d+)$') {
+            $major = [int]$matches[1]
+            $minor = [int]$matches[2]
+            $patch = [int]$matches[3]
+
+            # Increment patch version
+            $patch++
+            $newVersion = "v$major.$minor.$patch"
+          } else {
+            Write-Error "Invalid version format: $latestTag"
+            exit 1
+          }
+        }
+
+        Write-Output "Current version: $latestTag"
+        Write-Output "New version: $newVersion"
+
+        # Set output for use in later steps
+        echo "version=$newVersion" >> $env:GITHUB_OUTPUT
+        echo "version_number=$($newVersion.TrimStart('v'))" >> $env:GITHUB_OUTPUT
+
+    - name: Install PS2EXE module
+      shell: pwsh
+      run: |
+        Set-PSRepository PSGallery -InstallationPolicy Trusted
+        Install-Module -Name PS2EXE -Scope CurrentUser -Force
+        Import-Module PS2EXE -Force
+
+    - name: Create output directory
+      shell: pwsh
+      run: |
+        New-Item -Path ".\bin" -ItemType Directory -Force
+
+    - name: Convert script to EXE
+      shell: pwsh
+      run: |
+        # Define input and output paths
+        $inputFile = ".\cologger.master.min.ps1"
+        $outputFile = ".\bin\cologger.exe"
+
+        # Verify input file exists
+        if (-not (Test-Path $inputFile)) {
+          Write-Error "Input file not found: $inputFile"
+          exit 1
+        }
+
+        # Convert to EXE (without icon since it doesn't exist)
+        Invoke-ps2exe -inputFile $inputFile -outputFile $outputFile -noConsole
+
+        # Verify output was created
+        if (-not (Test-Path $outputFile)) {
+          Write-Error "Failed to create executable"
+          exit 1
+        }
+
+        Write-Output "Successfully created: $outputFile"
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: cologger-${{ steps.version.outputs.version }}
+        path: .\bin\cologger.exe
+
+    - name: Create Git tag
+      shell: pwsh
+      run: |
+        $version = "${{ steps.version.outputs.version }}"
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git tag -a $version -m "Release $version"
+        git push origin $version
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ steps.version.outputs.version }}
+        name: CoLogger ${{ steps.version.outputs.version }}
+        body: |
+          ## CoLogger Release ${{ steps.version.outputs.version }}
+
+          Automated release of CoLogger executable built from minified PowerShell script.
+
+          ### Changes
+          - Built from: `cologger.master.min.ps1`
+          - Commit: ${{ github.sha }}
+
+          ### Installation
+          Download `cologger.exe` and run it on Windows.
+        files: |
+          .\bin\cologger.exe
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
