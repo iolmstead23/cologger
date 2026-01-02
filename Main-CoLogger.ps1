@@ -19,7 +19,8 @@ function Test-PackageModules {
             'Menu-Display.psm1',
             'Log-File-Reader.psm1',
             'LLM-API-Client.psm1',
-            'Report-Generator.psm1'
+            'Report-Generator.psm1',
+            'Prompt-Manager.psm1'
         )
 
         $packagesPath = Join-Path -Path $PSScriptRoot -ChildPath "packages"
@@ -55,7 +56,8 @@ function Import-PackageModules {
             'Menu-Display',
             'Log-File-Reader',
             'LLM-API-Client',
-            'Report-Generator'
+            'Report-Generator',
+            'Prompt-Manager'
         )
 
         $packagesPath = Join-Path -Path $PSScriptRoot -ChildPath "packages"
@@ -90,7 +92,7 @@ function Initialize-RequiredFolders {
     try {
         Write-Host "Validating required folders..." -ForegroundColor Cyan
 
-        $requiredFolders = @('logs', 'reports')
+        $requiredFolders = @('logs', 'reports', 'prompts')
 
         foreach ($folderName in $requiredFolders) {
             $folderPath = Join-Path -Path $PSScriptRoot -ChildPath $folderName
@@ -331,6 +333,28 @@ function Invoke-AnalyzeLogsAndGenerateReport {
         Write-Host "  → Configuration loaded" -ForegroundColor Gray
         Write-Host ""
 
+        # Prompt template selection
+        Write-Host "Selecting analysis prompt..." -ForegroundColor Cyan
+        $promptSelection = Show-PromptSelectionMenu
+
+        if ($null -eq $promptSelection) {
+            Write-Error "Failed to select prompt template"
+            Write-Host "Using default prompt as fallback..." -ForegroundColor Yellow
+            $finalSystemPrompt = Get-DefaultSystemPrompt
+        }
+        else {
+            # Build final prompt from selection
+            $basePrompt = if ($promptSelection.PromptSource -eq "template") {
+                $promptSelection.TemplateContent
+            } else {
+                Get-DefaultSystemPrompt
+            }
+
+            $finalSystemPrompt = Build-FinalSystemPrompt -TemplateContent $basePrompt -CustomText $promptSelection.CustomText
+        }
+        Write-Host "  → Prompt configured" -ForegroundColor Gray
+        Write-Host ""
+
         Write-Host "Testing LLM connectivity..." -ForegroundColor Cyan
         if ($configuration.timeoutSeconds) {
             $timeoutSeconds = $configuration.timeoutSeconds
@@ -355,7 +379,7 @@ function Invoke-AnalyzeLogsAndGenerateReport {
         Write-Host "  (This may take a while depending on log size and model speed)" -ForegroundColor Gray
         Write-Host ""
 
-        $analysisResult = Invoke-LLMAnalysis -LogContent $combinedLogContent -ApiEndpoint $configuration.apiEndpoint -ApiPort $configuration.apiPort -ApiPath $configuration.apiPath -SystemPrompt $configuration.systemPrompt -Model $configuration.model -Temperature $configuration.temperature -MaxTokens $configuration.maxTokens -TimeoutSeconds $configuration.timeoutSeconds
+        $analysisResult = Invoke-LLMAnalysis -LogContent $combinedLogContent -ApiEndpoint $configuration.apiEndpoint -ApiPort $configuration.apiPort -ApiPath $configuration.apiPath -SystemPrompt $finalSystemPrompt -Model $configuration.model -Temperature $configuration.temperature -MaxTokens $configuration.maxTokens -TimeoutSeconds $configuration.timeoutSeconds
 
         if ([string]::IsNullOrWhiteSpace($analysisResult)) {
             Write-Error "Failed to receive analysis from LLM"
