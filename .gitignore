@@ -10,6 +10,7 @@ project.lock.json
 # project specific
 *.log
 /.claude/
+/reports
 
 # dotnet cli install/uninstall scripts
 dotnet-install.ps1

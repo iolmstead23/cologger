@@ -1,48 +1,6 @@
-<#
-.SYNOPSIS
-    LLM API client module for CoLogger application.
-
-.DESCRIPTION
-    Provides functions to communicate with a local LLM API using OpenAI-compatible
-    format. Handles connection testing, request building, and log analysis.
-
-.NOTES
-    Module: LLM-API-Client
-    Author: CoLogger Development Team
-    Version: 1.0.0
-#>
-
 #region Public Functions
 
-<#
-.SYNOPSIS
-    Builds an OpenAI-compatible request payload for LLM analysis.
-
-.DESCRIPTION
-    Creates a properly formatted JSON request body for OpenAI-compatible APIs.
-    Includes system prompt and user message with log content.
-
-.PARAMETER SystemPrompt
-    The system prompt that defines the LLM's role and behavior.
-
-.PARAMETER UserMessage
-    The user message containing the log content to analyze.
-
-.PARAMETER Model
-    The model name to use for the request.
-
-.PARAMETER Temperature
-    The temperature parameter for response randomness (0.0-1.0).
-
-.PARAMETER MaxTokens
-    The maximum number of tokens in the response.
-
-.EXAMPLE
-    $payload = Build-LLMRequestPayload -SystemPrompt "You are a log analyst" -UserMessage "Analyze these logs..."
-
-.OUTPUTS
-    System.String - JSON string containing the request payload.
-#>
+# Builds OpenAI-compatible request payload for LLM
 function Build-LLMRequestPayload {
     [CmdletBinding()]
     [OutputType([string])]
@@ -101,29 +59,7 @@ function Build-LLMRequestPayload {
     }
 }
 
-<#
-.SYNOPSIS
-    Sends an HTTP POST request to the LLM API endpoint.
-
-.DESCRIPTION
-    Makes an HTTP POST request to the LLM API with the provided JSON payload.
-    Handles timeouts and connection errors.
-
-.PARAMETER ApiUrl
-    The complete URL to the LLM API endpoint.
-
-.PARAMETER JsonPayload
-    The JSON request payload to send.
-
-.PARAMETER TimeoutSeconds
-    The timeout in seconds for the HTTP request.
-
-.EXAMPLE
-    $response = Send-LLMRequest -ApiUrl "http://localhost:1234/v1/chat/completions" -JsonPayload $payload
-
-.OUTPUTS
-    PSCustomObject - The parsed API response, or $null if failed.
-#>
+# Sends HTTP POST request to LLM API endpoint
 function Send-LLMRequest {
     [CmdletBinding()]
     [OutputType([PSCustomObject])]
@@ -161,35 +97,7 @@ function Send-LLMRequest {
     }
 }
 
-<#
-.SYNOPSIS
-    Tests the connection to the LLM API.
-
-.DESCRIPTION
-    Validates that the LLM API is reachable and responding.
-    Sends a simple test request and checks for a valid response.
-
-.PARAMETER ApiEndpoint
-    The base API endpoint (e.g., "http://localhost").
-
-.PARAMETER ApiPort
-    The API port number.
-
-.PARAMETER ApiPath
-    The API path (e.g., "/v1/chat/completions").
-
-.PARAMETER Model
-    The LLM model name to test (e.g., "qwen2.5:latest", "llama2:latest"). Defaults to "qwen2.5:latest".
-
-.PARAMETER TimeoutSeconds
-    The timeout in seconds for the connection test.
-
-.EXAMPLE
-    $isConnected = Test-LLMConnection -ApiEndpoint "http://localhost" -ApiPort 1234 -ApiPath "/v1/chat/completions" -Model "qwen2.5:latest"
-
-.OUTPUTS
-    System.Boolean - $true if connection successful, $false otherwise.
-#>
+# Tests LLM API connectivity with simple request
 function Test-LLMConnection {
     [CmdletBinding()]
     [OutputType([bool])]
@@ -245,47 +153,7 @@ function Test-LLMConnection {
     }
 }
 
-<#
-.SYNOPSIS
-    Sends log content to the LLM for analysis.
-
-.DESCRIPTION
-    Takes log content, constructs an appropriate prompt, sends it to the LLM API,
-    and returns the analysis results.
-
-.PARAMETER LogContent
-    The combined log content to analyze.
-
-.PARAMETER ApiEndpoint
-    The base API endpoint (e.g., "http://localhost").
-
-.PARAMETER ApiPort
-    The API port number.
-
-.PARAMETER ApiPath
-    The API path (e.g., "/v1/chat/completions").
-
-.PARAMETER SystemPrompt
-    The system prompt defining the LLM's analysis role.
-
-.PARAMETER Model
-    The model name to use.
-
-.PARAMETER Temperature
-    The temperature parameter for response randomness.
-
-.PARAMETER MaxTokens
-    The maximum number of tokens in the response.
-
-.PARAMETER TimeoutSeconds
-    The timeout in seconds for the request.
-
-.EXAMPLE
-    $analysis = Invoke-LLMAnalysis -LogContent $logs -ApiEndpoint "http://localhost" -ApiPort 1234
-
-.OUTPUTS
-    System.String - The LLM's analysis text, or $null if failed.
-#>
+# Sends log content to LLM and returns analysis
 function Invoke-LLMAnalysis {
     [CmdletBinding()]
     [OutputType([string])]

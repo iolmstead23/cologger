@@ -1,23 +1,6 @@
-<#
-.SYNOPSIS
-    Log file reading module for CoLogger application.
-
-.DESCRIPTION
-    Provides functions to read and process log files from the logs folder.
-    Handles multiple log files, encoding issues, and file metadata.
-
-.NOTES
-    Module: Log-File-Reader
-    Author: CoLogger Development Team
-    Version: 1.0.0
-#>
-
 #region Private Helper Functions
 
-<#
-.SYNOPSIS
-    Gets the logs folder path relative to the script root.
-#>
+# Returns path to logs folder
 function Get-LogsFolderPath {
     [CmdletBinding()]
     param()
@@ -37,21 +20,7 @@ function Get-LogsFolderPath {
 
 #region Public Functions
 
-<#
-.SYNOPSIS
-    Tests if the logs folder exists.
-
-.DESCRIPTION
-    Validates that the logs folder exists in the expected location.
-    Returns true if exists, false otherwise.
-
-.EXAMPLE
-    Test-LogFolderExists
-    Returns $true if logs folder exists.
-
-.OUTPUTS
-    System.Boolean
-#>
+# Checks if logs folder exists
 function Test-LogFolderExists {
     [CmdletBinding()]
     [OutputType([bool])]
@@ -73,21 +42,7 @@ function Test-LogFolderExists {
     }
 }
 
-<#
-.SYNOPSIS
-    Gets all .log files from the logs folder.
-
-.DESCRIPTION
-    Retrieves an array of full paths to all .log files in the logs folder.
-    Returns empty array if no log files found or folder doesn't exist.
-
-.EXAMPLE
-    $logFiles = Get-LogFiles
-    Returns array of .log file paths.
-
-.OUTPUTS
-    System.String[] - Array of log file paths.
-#>
+# Returns array of .log file paths from logs folder
 function Get-LogFiles {
     [CmdletBinding()]
     [OutputType([string[]])]
@@ -125,24 +80,7 @@ function Get-LogFiles {
     }
 }
 
-<#
-.SYNOPSIS
-    Gets metadata for a log file.
-
-.DESCRIPTION
-    Retrieves file metadata including name, size in bytes, and last modified time.
-    Returns a custom object with metadata properties.
-
-.PARAMETER FilePath
-    The full path to the log file.
-
-.EXAMPLE
-    $metadata = Get-LogFileMetadata -FilePath "C:\logs\app.log"
-    Returns object with Name, SizeBytes, LastModified properties.
-
-.OUTPUTS
-    PSCustomObject - Object containing file metadata.
-#>
+# Gets file metadata (name, size, modified time)
 function Get-LogFileMetadata {
     [CmdletBinding()]
     [OutputType([PSCustomObject])]
@@ -185,24 +123,7 @@ function Get-LogFileMetadata {
     }
 }
 
-<#
-.SYNOPSIS
-    Reads content from a single log file.
-
-.DESCRIPTION
-    Reads the entire content of a log file with proper encoding handling.
-    Supports UTF-8 and ASCII encoding. Warns if file is very large.
-
-.PARAMETER FilePath
-    The full path to the log file to read.
-
-.EXAMPLE
-    $content = Read-LogFileContent -FilePath "C:\logs\app.log"
-    Returns the file content as a string.
-
-.OUTPUTS
-    System.String - The log file content.
-#>
+# Reads complete content from a single log file
 function Read-LogFileContent {
     [CmdletBinding()]
     [OutputType([string])]
@@ -242,22 +163,7 @@ function Read-LogFileContent {
     }
 }
 
-<#
-.SYNOPSIS
-    Reads all log files and combines them with separators.
-
-.DESCRIPTION
-    Retrieves all .log files from the logs folder, reads their content,
-    and combines them into a single string with clear separators between files.
-    Includes file metadata in separators.
-
-.EXAMPLE
-    $combinedLogs = Get-CombinedLogContent
-    Returns all log files combined with separators.
-
-.OUTPUTS
-    System.String - Combined log content from all files.
-#>
+# Combines all log files with separators
 function Get-CombinedLogContent {
     [CmdletBinding()]
     [OutputType([string])]

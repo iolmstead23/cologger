@@ -1,23 +1,6 @@
-<#
-.SYNOPSIS
-    Configuration management module for CoLogger application.
-
-.DESCRIPTION
-    Provides functions to read, write, validate, and initialize configuration
-    for the CoLogger log analysis tool. Manages config.json file operations.
-
-.NOTES
-    Module: Configuration-Manager
-    Author: CoLogger Development Team
-    Version: 1.0.0
-#>
-
 #region Private Helper Functions
 
-<#
-.SYNOPSIS
-    Gets the configuration file path relative to the script root.
-#>
+# Returns path to config.json
 function Get-ConfigurationFilePath {
     [CmdletBinding()]
     param()
@@ -37,21 +20,7 @@ function Get-ConfigurationFilePath {
 
 #region Public Functions
 
-<#
-.SYNOPSIS
-    Tests if the configuration file exists and contains valid JSON.
-
-.DESCRIPTION
-    Validates that config.json exists and can be parsed as valid JSON format.
-    Returns true if valid, false otherwise.
-
-.EXAMPLE
-    Test-CoLoggerConfigurationFile
-    Returns $true if config.json exists and is valid JSON.
-
-.OUTPUTS
-    System.Boolean
-#>
+# Validates config.json exists and contains valid JSON
 function Test-CoLoggerConfigurationFile {
     [CmdletBinding()]
     [OutputType([bool])]
@@ -83,21 +52,7 @@ function Test-CoLoggerConfigurationFile {
     }
 }
 
-<#
-.SYNOPSIS
-    Initializes a default configuration file if one does not exist.
-
-.DESCRIPTION
-    Creates a new config.json file with default values for CoLogger application.
-    Will not overwrite existing configuration files.
-
-.EXAMPLE
-    Initialize-CoLoggerConfiguration
-    Creates config.json with default settings if it doesn't exist.
-
-.OUTPUTS
-    System.Boolean - Returns $true if initialization succeeded, $false otherwise.
-#>
+# Creates default config.json if missing
 function Initialize-CoLoggerConfiguration {
     [CmdletBinding()]
     [OutputType([bool])]
@@ -141,21 +96,7 @@ function Initialize-CoLoggerConfiguration {
     }
 }
 
-<#
-.SYNOPSIS
-    Reads and returns the CoLogger configuration.
-
-.DESCRIPTION
-    Loads configuration from config.json and returns it as a PowerShell custom object.
-    If the file doesn't exist or is invalid, returns $null.
-
-.EXAMPLE
-    $config = Get-CoLoggerConfiguration
-    $apiUrl = "$($config.apiEndpoint):$($config.apiPort)"
-
-.OUTPUTS
-    PSCustomObject - Configuration object with all settings, or $null if failed.
-#>
+# Loads configuration from config.json
 function Get-CoLoggerConfiguration {
     [CmdletBinding()]
     [OutputType([PSCustomObject])]
@@ -188,25 +129,7 @@ function Get-CoLoggerConfiguration {
     }
 }
 
-<#
-.SYNOPSIS
-    Writes a configuration object to config.json.
-
-.DESCRIPTION
-    Saves the provided configuration object to config.json file.
-    Validates that the configuration object contains required fields.
-
-.PARAMETER ConfigurationObject
-    A PSCustomObject or hashtable containing configuration settings.
-
-.EXAMPLE
-    $config = Get-CoLoggerConfiguration
-    $config.apiPort = 5000
-    Set-CoLoggerConfiguration -ConfigurationObject $config
-
-.OUTPUTS
-    System.Boolean - Returns $true if write succeeded, $false otherwise.
-#>
+# Saves configuration object to config.json
 function Set-CoLoggerConfiguration {
     [CmdletBinding()]
     [OutputType([bool])]

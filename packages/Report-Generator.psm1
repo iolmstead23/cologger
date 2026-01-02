@@ -1,23 +1,6 @@
-<#
-.SYNOPSIS
-    Report generation module for CoLogger application.
-
-.DESCRIPTION
-    Provides functions to generate and save markdown reports from
-    log analysis results. Handles report formatting and file management.
-
-.NOTES
-    Module: Report-Generator
-    Author: CoLogger Development Team
-    Version: 1.0.0
-#>
-
 #region Private Helper Functions
 
-<#
-.SYNOPSIS
-    Gets the reports folder path relative to the script root.
-#>
+# Returns path to reports folder
 function Get-ReportsFolderPath {
     [CmdletBinding()]
     param()
@@ -37,21 +20,7 @@ function Get-ReportsFolderPath {
 
 #region Public Functions
 
-<#
-.SYNOPSIS
-    Tests if the reports folder exists.
-
-.DESCRIPTION
-    Validates that the reports folder exists in the expected location.
-    Returns true if exists, false otherwise.
-
-.EXAMPLE
-    Test-ReportFolderExists
-    Returns $true if reports folder exists.
-
-.OUTPUTS
-    System.Boolean
-#>
+# Checks if reports folder exists
 function Test-ReportFolderExists {
     [CmdletBinding()]
     [OutputType([bool])]
@@ -73,21 +42,7 @@ function Test-ReportFolderExists {
     }
 }
 
-<#
-.SYNOPSIS
-    Generates a timestamped filename for a report.
-
-.DESCRIPTION
-    Creates a filename with format: Report_YYYY-MM-DD_HHMMSS.md
-    Uses the current date and time.
-
-.EXAMPLE
-    $filename = Get-ReportFileName
-    Returns "Report_2026-01-01_143022.md"
-
-.OUTPUTS
-    System.String - The generated filename.
-#>
+# Generates timestamped filename for report
 function Get-ReportFileName {
     [CmdletBinding()]
     [OutputType([string])]
@@ -104,29 +59,7 @@ function Get-ReportFileName {
     }
 }
 
-<#
-.SYNOPSIS
-    Formats a report section with markdown headers.
-
-.DESCRIPTION
-    Creates a properly formatted markdown section with a header and content.
-    Supports different header levels.
-
-.PARAMETER HeaderText
-    The text for the section header.
-
-.PARAMETER Content
-    The content for the section.
-
-.PARAMETER HeaderLevel
-    The markdown header level (1-6). Default is 2 (##).
-
-.EXAMPLE
-    $section = Format-ReportSection -HeaderText "Summary" -Content "All systems operational" -HeaderLevel 2
-
-.OUTPUTS
-    System.String - The formatted markdown section.
-#>
+# Formats markdown section with header and content
 function Format-ReportSection {
     [CmdletBinding()]
     [OutputType([string])]
@@ -155,29 +88,7 @@ function Format-ReportSection {
     }
 }
 
-<#
-.SYNOPSIS
-    Creates a markdown report from analysis data.
-
-.DESCRIPTION
-    Generates a complete markdown report including summary, errors,
-    log sources, and detailed analysis. Follows a standard template.
-
-.PARAMETER AnalysisText
-    The LLM's analysis text.
-
-.PARAMETER LogFileNames
-    Array of log file names that were analyzed.
-
-.PARAMETER Summary
-    Optional summary text. If not provided, uses a default message.
-
-.EXAMPLE
-    $report = New-CoLoggerReport -AnalysisText $analysis -LogFileNames @("app.log", "system.log")
-
-.OUTPUTS
-    System.String - The complete markdown report content.
-#>
+# Creates complete markdown report from analysis
 function New-CoLoggerReport {
     [CmdletBinding()]
     [OutputType([string])]
@@ -228,27 +139,7 @@ function New-CoLoggerReport {
     }
 }
 
-<#
-.SYNOPSIS
-    Saves report content to a markdown file.
-
-.DESCRIPTION
-    Writes the provided report content to a timestamped markdown file
-    in the reports folder. Creates the folder if it doesn't exist.
-
-.PARAMETER ReportContent
-    The markdown report content to save.
-
-.PARAMETER CustomFileName
-    Optional custom filename. If not provided, generates timestamped name.
-
-.EXAMPLE
-    $success = Save-ReportToFile -ReportContent $report
-    Saves report with auto-generated filename.
-
-.OUTPUTS
-    System.Boolean - Returns $true if save succeeded, $false otherwise.
-#>
+# Saves report content to timestamped markdown file
 function Save-ReportToFile {
     [CmdletBinding()]
     [OutputType([bool])]

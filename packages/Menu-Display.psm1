@@ -1,31 +1,6 @@
-<#
-.SYNOPSIS
-    Interactive menu display module for CoLogger application.
-
-.DESCRIPTION
-    Provides functions to display and handle the interactive menu system
-    for the CoLogger log analysis tool. Handles user input and validation.
-
-.NOTES
-    Module: Menu-Display
-    Author: CoLogger Development Team
-    Version: 1.0.0
-#>
-
 #region Public Functions
 
-<#
-.SYNOPSIS
-    Clears the console screen for a clean menu display.
-
-.DESCRIPTION
-    Clears the PowerShell console screen to provide a clean slate
-    for displaying the menu interface.
-
-.EXAMPLE
-    Clear-MenuScreen
-    Clears the console screen.
-#>
+# Clears console for clean display
 function Clear-MenuScreen {
     [CmdletBinding()]
     param()
@@ -38,18 +13,7 @@ function Clear-MenuScreen {
     }
 }
 
-<#
-.SYNOPSIS
-    Displays the application header banner.
-
-.DESCRIPTION
-    Shows a formatted header with the CoLogger application name
-    and decorative borders.
-
-.EXAMPLE
-    Show-MenuHeader
-    Displays the application header.
-#>
+# Displays application banner
 function Show-MenuHeader {
     [CmdletBinding()]
     param()
@@ -66,24 +30,7 @@ function Show-MenuHeader {
     }
 }
 
-<#
-.SYNOPSIS
-    Formats and displays a single menu option.
-
-.DESCRIPTION
-    Displays a menu option with consistent formatting including
-    the option number and description.
-
-.PARAMETER OptionNumber
-    The numeric identifier for the menu option (1, 2, 3, etc.).
-
-.PARAMETER OptionText
-    The descriptive text for what this menu option does.
-
-.EXAMPLE
-    Show-MenuOption -OptionNumber 1 -OptionText "Test LLM Connection"
-    Displays: 1. Test LLM Connection
-#>
+# Displays a formatted menu option
 function Show-MenuOption {
     [CmdletBinding()]
     param(
@@ -104,28 +51,7 @@ function Show-MenuOption {
     }
 }
 
-<#
-.SYNOPSIS
-    Prompts the user for menu input and validates it.
-
-.DESCRIPTION
-    Displays a prompt for the user to enter their menu choice,
-    validates the input is within the valid range, and returns
-    the selection as an integer.
-
-.PARAMETER MinChoice
-    The minimum valid choice number.
-
-.PARAMETER MaxChoice
-    The maximum valid choice number.
-
-.EXAMPLE
-    $choice = Get-UserMenuChoice -MinChoice 1 -MaxChoice 3
-    Prompts for input and returns validated choice between 1-3.
-
-.OUTPUTS
-    System.Int32 - The validated user menu choice.
-#>
+# Prompts and validates user menu choice
 function Get-UserMenuChoice {
     [CmdletBinding()]
     [OutputType([int])]
@@ -164,22 +90,7 @@ function Get-UserMenuChoice {
     }
 }
 
-<#
-.SYNOPSIS
-    Displays the main menu and returns the user's selection.
-
-.DESCRIPTION
-    Shows the complete CoLogger main menu with all available options,
-    prompts for user input, and returns the validated selection.
-    Returns -1 if input is invalid.
-
-.EXAMPLE
-    $selection = Show-MainMenu
-    if ($selection -eq 1) { Test-LLMConnection }
-
-.OUTPUTS
-    System.Int32 - The user's menu selection (1-3), or -1 if invalid.
-#>
+# Displays main menu and returns user selection
 function Show-MainMenu {
     [CmdletBinding()]
     [OutputType([int])]
