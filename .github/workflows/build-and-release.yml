@@ -78,8 +78,8 @@ jobs:
           exit 1
         }
 
-        # Convert to EXE (without icon since it doesn't exist)
-        Invoke-ps2exe -inputFile $inputFile -outputFile $outputFile -noConsole
+        # Convert to EXE with console window for proper terminal interface
+        Invoke-ps2exe -inputFile $inputFile -outputFile $outputFile
 
         # Verify output was created
         if (-not (Test-Path $outputFile)) {
