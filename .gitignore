@@ -9,6 +9,7 @@ project.lock.json
 
 # project specific
 *.log
+/logs/
 /.claude/
 /reports
 
