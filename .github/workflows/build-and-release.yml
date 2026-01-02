@@ -68,26 +68,52 @@ jobs:
     - name: Convert script to EXE
       shell: pwsh
       run: |
-        # Define input and output paths
-        $inputFile = "./cologger.master.min.ps1"
-        $outputFile = "./bin/cologger.exe"
+        # Use a temporary directory without spaces to avoid CSC compiler issues
+        $tempBuildDir = "C:\temp-cologger-build"
+        New-Item -Path $tempBuildDir -ItemType Directory -Force | Out-Null
+
+        # Define paths
+        $sourceScript = "./cologger.master.ps1"
+        $tempScript = Join-Path $tempBuildDir "cologger.master.ps1"
+        $tempExe = Join-Path $tempBuildDir "cologger.exe"
+        $finalExe = "./bin/cologger.exe"
 
         # Verify input file exists
-        if (-not (Test-Path $inputFile)) {
-          Write-Error "Input file not found: $inputFile"
+        if (-not (Test-Path $sourceScript)) {
+          Write-Error "Input file not found: $sourceScript"
           exit 1
         }
 
-        # Convert to EXE with console window for proper terminal interface
-        Invoke-ps2exe -inputFile $inputFile -outputFile $outputFile
+        # Copy script to temp directory
+        Copy-Item $sourceScript -Destination $tempScript -Force
 
-        # Verify output was created
-        if (-not (Test-Path $outputFile)) {
-          Write-Error "Failed to create executable"
+        # Build in temp directory (no spaces in path)
+        Push-Location $tempBuildDir
+        try {
+          Invoke-ps2exe -inputFile "cologger.master.ps1" -outputFile "cologger.exe"
+
+          if (-not (Test-Path "cologger.exe")) {
+            Write-Error "Failed to create executable"
+            exit 1
+          }
+        }
+        finally {
+          Pop-Location
+        }
+
+        # Copy executable to final location
+        Copy-Item $tempExe -Destination $finalExe -Force
+
+        # Cleanup temp directory
+        Remove-Item $tempBuildDir -Recurse -Force -ErrorAction SilentlyContinue
+
+        # Verify final output
+        if (-not (Test-Path $finalExe)) {
+          Write-Error "Failed to copy executable to final location"
           exit 1
         }
 
-        Write-Output "Successfully created: $outputFile"
+        Write-Output "Successfully created: $finalExe"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
@@ -112,10 +138,10 @@ jobs:
         body: |
           ## CoLogger Release ${{ steps.version.outputs.version }}
 
-          Automated release of CoLogger executable built from minified PowerShell script.
+          Automated release of CoLogger executable built from PowerShell script.
 
           ### Changes
-          - Built from: `cologger.master.min.ps1`
+          - Built from: `cologger.master.ps1`
           - Commit: ${{ github.sha }}
 
           ### Installation

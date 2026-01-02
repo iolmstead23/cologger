@@ -15,7 +15,18 @@ $LLM_TEMPERATURE=0.3
 $LLM_MAX_TOKENS=4096
 $LLM_TIMEOUT=30
 $DEFAULT_PROMPT='You are an expert log analysis assistant for IT Service Desk. Analyze the provided logs and identify errors, warnings, and issues. Provide clear, actionable insights.'
-$SCRIPT_ROOT=$PSScriptRoot
+
+# Detect script root - handle both .ps1 script and compiled .exe
+if ([string]::IsNullOrWhiteSpace($PSScriptRoot)) {
+    # Running as compiled executable - use assembly base directory
+    $SCRIPT_ROOT = [System.AppDomain]::CurrentDomain.BaseDirectory
+    if ($SCRIPT_ROOT.EndsWith('\')) {
+        $SCRIPT_ROOT = $SCRIPT_ROOT.Substring(0, $SCRIPT_ROOT.Length - 1)
+    }
+} else {
+    # Running as .ps1 script - use script directory
+    $SCRIPT_ROOT = $PSScriptRoot
+}
 function Get-Configuration{
 param()
 try{
