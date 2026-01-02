@@ -33,5 +33,3 @@ INCLUDED TEMPLATES:
 - Security Focus: Emphasizes security events and vulnerabilities
 - Performance Analysis: Focuses on performance bottlenecks and resource issues
 - Error Tracking: Prioritizes errors, exceptions, and failure patterns
-
-Need help? Edit this file or create new templates as needed!

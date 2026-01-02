@@ -63,14 +63,14 @@ jobs:
     - name: Create output directory
       shell: pwsh
       run: |
-        New-Item -Path ".\bin" -ItemType Directory -Force
+        New-Item -Path "./bin" -ItemType Directory -Force
 
     - name: Convert script to EXE
       shell: pwsh
       run: |
         # Define input and output paths
-        $inputFile = ".\cologger.master.min.ps1"
-        $outputFile = ".\bin\cologger.exe"
+        $inputFile = "./cologger.master.min.ps1"
+        $outputFile = "./bin/cologger.exe"
 
         # Verify input file exists
         if (-not (Test-Path $inputFile)) {
@@ -93,7 +93,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: cologger-${{ steps.version.outputs.version }}
-        path: .\bin\cologger.exe
+        path: ./bin/cologger.exe
 
     - name: Create Git tag
       shell: pwsh
@@ -121,7 +121,7 @@ jobs:
           ### Installation
           Download `cologger.exe` and run it on Windows.
         files: |
-          .\bin\cologger.exe
+          ./bin/cologger.exe
         draft: false
         prerelease: false
       env:
